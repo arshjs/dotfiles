@@ -1,0 +1,365 @@
+let mapleader = ' '
+
+set visualbell
+
+set ideamarks
+set ideajoin
+set idearefactormode=keep
+
+set clipboard+=unnamed
+
+set number
+set relativenumber
+
+augroup numbertoggle
+    autocmd!
+    autocmd InsertEnter * :set norelativenumber
+    autocmd InsertLeave * :set relativenumber
+augroup END
+
+set highlightedyank
+let g:highlightedyank_highlight_duration = 150
+" Formula: Channel = ((255 - Alpha) * Base(30, 30, 46) + Alpha * Mauve(203, 166, 247)) / 255
+let g:highlightedyank_highlight_color = "rgba(77, 67, 101, 255)"
+
+set easymotion
+set NERDTree
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+set scrolloff=10
+
+
+" ====================================================================
+" THE 'p' NAMESPACE: High-Level Project Management
+" ====================================================================
+
+" [p]roject [s]tructure — Open JDK, Modules, and Libraries configuration
+nmap <leader>ps <Action>(ShowProjectStructureSettings)
+
+" [p]roject [v]cs fetch — Checkout or clone a new project from remote Git/VCS
+nmap <leader>pv <Action>(ProjectFromVersionControl)
+
+" [p]roject [r]ecent — Toggle the recent projects popup / dashboard switcher
+nmap <leader>pr <Action>(ManageRecentProjects)
+
+" [p]roject [o]pen windows — List and quickly switch between active project frames
+nmap <leader>po <Action>(OpenProjectWindows)
+
+" [p]roject [n]ew — Open the standard new project wizard dialog frame
+nmap <leader>pn <Action>(NewProject)
+
+" [p]roject [c]lose — Safely close the current project workspace back to splash
+nmap <leader>pc <Action>(CloseProject)
+
+
+
+" ====================================================================
+" THE 'f' NAMESPACE: File & Navigation
+" ====================================================================
+" [f]ind [p]ath — Search for string text inside files (Find in Files)
+nmap <leader>fp <Action>(FindInPath)
+
+" [f]ind [f]iles — Search file names globally (Go to File)
+nmap <leader>ff <Action>(GotoFile)
+
+" [f]ind [a]ction — Universal command palette (Search Everywhere)
+nmap <leader>fa <Action>(GotoAction)
+
+" [f]ind [r]ecent — Open the recent files popup menu
+nmap <leader>fr <Action>(RecentFiles)
+
+" [f]ind [n]ew — Create a new class or file in the current directory
+nmap <leader>fn <Action>(NewClass)
+
+" [f]ile [s]elect — Locate the active file in the Project View sidebar
+nmap <leader>fs <Action>(SelectInProjectView)
+
+" tabs
+nmap H <Action>(PreviousTab)
+nmap L <Action>(NextTab)
+
+
+" ====================================================================
+" THE 'w' NAMESPACE: Tool Window Management (JetBrains-Specific)
+" ====================================================================
+
+" List of windows: [tool_key, tool_action, tool_modes]
+" 'n' = Normal mode, 'v' = Visual mode
+" <leader>w[key] - Open / Focus, <leader>w[KEY] - Close
+let s:tool_windows = [
+    \ ['p', 'ActivateProjectToolWindow',           ['n']],
+    \ ['e', 'ActivateProblemsViewToolWindow',      ['n']],
+    \ ['v', 'ActivateVersionControlToolWindow',    ['n']],
+    \ ['c', 'ActivateCommitToolWindow',            ['n']],
+    \ ['m', 'ActivateMavenToolWindow',             ['n']],
+    \ ['b', 'ActivateBookmarksToolWindow',         ['n']],
+    \ ['t', 'ActivateTerminalToolWindow',          ['n']],
+    \ ['i', 'ActivateGitHubCopilotChatToolWindow', ['n']],
+    \ ['r', 'ActivateRunToolWindow',               ['n']],
+    \ ['d', 'ActivateDebugToolWindow',             ['n']],
+    \ ['o', 'ActivateCoverageToolWindow',          ['n']],
+    \ ['s', 'ActivateStructureToolWindow',         ['n']]
+    \ ]
+
+for s:item in s:tool_windows
+    let s:tool_key    = s:item[0]
+    let s:tool_action = s:item[1]
+    let s:tool_modes  = s:item[2]
+
+    for s:mode in s:tool_modes
+        " Lowercase: Open / Focus the window panel
+        execute s:mode . 'map <leader>w' . s:tool_key . ' <Action>(' . s:tool_action . ')'
+
+        " Uppercase: Gain focus on that specific window panel, THEN hide it cleanly
+        execute s:mode . 'map <leader>w' . toupper(s:tool_key) . ' <Action>(' . s:tool_action . ') \| <Action>(HideActiveWindow)'
+    endfor
+endfor
+
+nmap <leader>wh <Action>(HideActiveWindow)
+nmap <leader>wq <Action>(HideAllWindows)
+
+
+" ====================================================================
+" THE 'ws' NESTED NAMESPACE: Advanced Split Layouts (JetBrains-Specific)
+" ====================================================================
+" NOTE: Split creation, navigation, closing (:q), and unsplitting (:only)
+" are natively handled by Vim. Only IDE layout manipulations belong here.
+
+" [w]indow [s]plit [m]ove — Move active tab to the opposite split group
+nmap <leader>wsm <Action>(MoveEditorToOppositeTabGroup)
+
+
+" ==========================================
+" THE 'c' NAMESPACE: Code Format & Methods
+" ==========================================
+
+" [c]ode [f]ormat (Reformat current file)
+nmap <leader>cf <Action>(ReformatCode)
+vmap <leader>cf <Action>(ReformatCode)
+
+" [c]ode [o]ptimize (Clean up imports)
+nmap <leader>co <Action>(OptimizeImports)
+
+" Code All (Run both formatting and import optimization in one go)
+nmap <leader>ca <Action>(ReformatCode) \| <Action>(OptimizeImports)
+
+" [c]ode [g]enerate — Open master Generate Menu (Constructors, Getters/Setters)
+nmap <leader>cg <Action>(Generate)
+
+" [c]ode [m]ethod override — Generate Override methods
+nmap <leader>cm <Action>(OverrideMethods)
+
+" [c]ode [i]mplement — Generate Implement methods
+nmap <leader>ci <Action>(ImplementMethods)
+
+
+" ====================================================================
+" Code Intelligence, Diagnostics & Comments (g / Error Namespace)
+" ====================================================================
+
+" Go to Next Highlighted Error/Warning in file
+nmap ]e <Action>(GotoNextError)
+
+" Go to Previous Highlighted Error/Warning in file
+nmap [e <Action>(GotoPreviousError)
+
+" [g]o [a]ctions — Show Intention Actions (Alt+Enter context menu)
+nmap ga <Action>(ShowIntentionActions)
+
+" [g]et [h]over — Get Hover info (Show modern documentation popup)
+nmap gh <Action>(ShowHoverInfo)
+
+" [g]o [d]eclaration — Go to Declaration (Find all usages of the symbol)
+nmap gd <Action>(GotoDeclaration)
+
+" [g]o [r]eferences — Go to References (Find all usages of the symbol via IDE popup)
+nmap gr <Action>(FindUsages)
+
+" [g]o [i]mplementation — Go to concrete class/method implementation
+nmap gi <Action>(GotoImplementation)
+
+" [g]o [t]ype — Go to Type definition
+nmap gt <Action>(GotoTypeDeclaration)
+
+" [g]o [c]omment [c]urrent — Toggle line comment on the current line
+nmap gcc <Action>(CommentByLineComment)
+
+" [g]o [c]omment — Toggle line comments for selected visual block
+vmap gc <Action>(CommentByLineComment)
+
+" [g]o [C]omment block — Toggle formatted BLOCK comment (e.g., /* ... */)
+vmap gC <Action>(CommentByBlockComment)
+
+
+
+" ====================================================================
+" THE 'g' NAMESPACE: Git & Version Control
+" ====================================================================
+
+" [g]it [f]etch — Fetch inbound changes from remote tracking branches
+nmap <leader>gf <Action>(Git.Fetch)
+
+" [g]it [b]lame — Toggle git blame annotations in the editor gutter
+nmap <leader>gb <Action>(Annotate)
+
+" [g]it [B]ranches — Open branches popup menu
+nmap <leader>gB <Action>(Git.Branches)
+
+" [g]it [c]ommit — Trigger a workspace save commit action
+nmap <leader>gc <Action>(CheckinProject)
+
+" [g]it [P]ush — Push staged commits upstream
+nmap <leader>gP <Action>(Vcs.Push)
+
+" [g]it [p]ull — Push upstream changes
+nmap <leader>gp <Action>(Git.Pull)
+
+" [g]it [l]og — View file or project revision history timeline
+nmap <leader>gl <Action>(Vcs.ShowTabbedFileHistory)
+
+" [g]it [u]pdate — Pull changes / Update project files from remote origin
+nmap <leader>gu <Action>(Vcs.UpdateProject)
+
+" [g]it [r]ollback — Revert change hunks under cursor back to last commit state
+nmap <leader>gr <Action>(ChangesView.Revert)
+
+
+
+" ==========================================
+" Refactoring (r Namespace)
+" ==========================================
+
+nmap <leader>rr <Action>(Refactorings.QuickListPopupAction)
+nmap <leader>re <Action>(RenameElement)
+
+
+
+" ====================================================================
+" THE 'm' NAMESPACE: Maven Build Automation
+" ====================================================================
+
+" [m]aven [e]xecute — Open the Maven goal execution window
+nmap <leader>me <Action>(Maven.ExecuteGoal)
+
+" [m]aven [r]eimport — Force re-import and reload pom.xml changes
+nmap <leader>mr <Action>(Maven.Reimport)
+
+" [m]aven [s]ync — Trigger incremental build synchronization
+nmap <leader>ms <Action>(Maven.SyncIncrementally)
+
+" [m]aven [u]pdate — Update folders and source roots
+nmap <leader>mu <Action>(Maven.UpdateFolders)
+
+
+
+" ====================================================================
+" THE 't' NAMESPACE: Tests & Execution
+" ====================================================================
+" [t]est [r]un — Runs the specific test class/method under the cursor
+nmap <leader>tr <Action>(RunClass)
+
+" [t]est [d]ebug — Debugs the specific test class/method under the cursor
+nmap <leader>td <Action>(DebugClass)
+
+" [t]est [c]overage — Runs the specific test class/method with coverage
+nmap <leader>tc <Action>(RunCoverage)
+
+" [t]est [t]rigger — Runs the general application or current file execution
+nmap <leader>tt <Action>(Run)
+
+" [t]est [l]ast — Reruns the last executed configuration or failed tests
+nmap <leader>tl <Action>(Rerun)
+
+" [t]est [s]elect/choose — Opens the menu to switch/choose your run configuration
+nmap <leader>ts <Action>(ChooseRunConfiguration)
+
+
+
+" ====================================================================
+" THE 'd' NAMESPACE: Debugging, Breakpoints, & Stepping
+" ====================================================================
+" --- Breakpoints & Evaluation ---
+" [d]ebug [b]reakpoint — Toggle line breakpoint
+nmap <leader>db <Action>(ToggleLineBreakpoint)
+
+" [d]ebug [l]ist — View all breakpoints
+nmap <leader>dl <Action>(ViewBreakpoints)
+
+" [d]ebug [m]ute — Toggle mute/unmute status for all breakpoints
+nmap <leader>dm <Action>(XDebugger.MuteBreakpoints)
+
+" [d]ebug [e]valuate — Evaluate expression (Normal & Visual Modes)
+nmap <leader>de <Action>(EvaluateExpression)
+vmap <leader>de <Action>(EvaluateExpression)
+
+
+" --- Stepping Commands (Your Custom Layout) ---
+" [d]ebug [n]ext — Step Over (Go to the next line)
+nmap <leader>dn <Action>(StepOver)
+
+" [d]ebug [i]nto — Step Into (Dive into the function)
+nmap <leader>di <Action>(StepInto)
+
+" [d]ebug [o]ut — Step Out (Finish current function context)
+nmap <leader>do <Action>(StepOut)
+
+" [d]ebug [r]esume — Resume program execution
+nmap <leader>dr <Action>(Resume)
+
+" [d]ebug [s]top — Stop the active execution/debug session
+nmap <leader>ds <Action>(Stop)
+
+
+" ====================================================================
+" EasyMotion Smart Navigation
+" ====================================================================
+nmap s <Plug>(easymotion-s2)
+vmap s <Plug>(easymotion-s2)
+
+" Operator Pending Mode safe
+omap s <Plug>(easymotion-s2)
+
+
+" ====================================================================
+" MISC Mappings
+" ====================================================================
+
+" Center on search
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" substitute selection
+vnoremap <C-r> \"hy:%s/<C-r>h//g<left><left>
+
+" search selection
+vnoremap <C-f> \"hy/<C-r>h
+
+" nohls
+nnoremap <silent> <CR> :noh<CR><CR>
+
+" search mappings
+nnoremap <leader>? :map <lt>leader>
+
+
+
+" Catppuccin theme widget
+let g:widget_mode_is_full_customization_dark=1
+let g:widget_mode_insert_background_dark="#94E2D5"
+let g:widget_mode_replace_background_dark="#F38BA8"
+let g:widget_mode_normal_background_dark="#CBA6F7"
+let g:widget_mode_command_background_dark="#FAB387"
+let g:widget_mode_visual_background_dark="#F9E2AF"
+let g:widget_mode_select_background_dark="#F2CDCD"
+let g:widget_mode_insert_foreground_dark="v:status_bar_bg"
+let g:widget_mode_replace_foreground_dark="v:status_bar_bg"
+let g:widget_mode_normal_foreground_dark="v:status_bar_bg"
+let g:widget_mode_command_foreground_dark="v:status_bar_bg"
+let g:widget_mode_visual_foreground_dark="v:status_bar_bg"
+let g:widget_mode_select_foreground_dark="v:status_bar_bg"
+
+" AceJump - Catppuccin Theme
+" Searched Text Background = Surface0 - #313244
+" Tag Foreground = Crust - #11111b
+" Tag Background = Mauve - #cba6f7
