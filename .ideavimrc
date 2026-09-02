@@ -77,9 +77,26 @@ nmap <leader>fn <Action>(NewClass)
 nmap <leader>fs <Action>(SelectInProjectView)
 
 " tabs
-nmap H <Action>(PreviousTab)
-nmap L <Action>(NextTab)
+nmap <S-h> <Action>(PreviousTab)
+nmap <S-l> <Action>(NextTab)
 
+" splits
+sethandler <C-h> a:vim
+sethandler <C-j> a:vim
+sethandler <C-k> a:vim
+sethandler <C-l> a:vim
+nmap <C-h> <C-w>h
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+nmap <C-l> <C-w>l
+
+" line up/down
+sethandler <M-j> a:vim
+sethandler <M-k> a:vim
+nmap <M-j> <Action>(MoveLineUp)
+vmap <M-j> <Action>(MoveLineUp)
+nmap <M-k> <Action>(MoveLineDown)
+vmap <M-k> <Action>(MoveLineDown)
 
 " ====================================================================
 " THE 'w' NAMESPACE: Tool Window Management (JetBrains-Specific)
@@ -156,14 +173,8 @@ nmap <leader>ci <Action>(ImplementMethods)
 
 
 " ====================================================================
-" Code Intelligence, Diagnostics & Comments (g / Error Namespace)
+" Code Intelligence, Diagnostics & Comments
 " ====================================================================
-
-" Go to Next Highlighted Error/Warning in file
-nmap ]e <Action>(GotoNextError)
-
-" Go to Previous Highlighted Error/Warning in file
-nmap [e <Action>(GotoPreviousError)
 
 " [g]o [a]ctions — Show Intention Actions (Alt+Enter context menu)
 nmap ga <Action>(ShowIntentionActions)
@@ -313,8 +324,18 @@ nmap <leader>ds <Action>(Stop)
 
 
 " ====================================================================
-" EasyMotion Smart Navigation
+" Code Navigation
 " ====================================================================
+
+" error / warning navigation
+nmap ]e <Action>(GotoNextError)
+nmap [e <Action>(GotoPreviousError)
+
+" method navigation
+nmap ]m <Action>(MethodDown)
+nmap [m <Action>(MethodUp)
+
+" easymotion
 nmap s <Plug>(easymotion-s2)
 vmap s <Plug>(easymotion-s2)
 
