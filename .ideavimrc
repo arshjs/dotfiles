@@ -93,10 +93,10 @@ nmap <C-l> <C-w>l
 " line up/down
 sethandler <M-j> a:vim
 sethandler <M-k> a:vim
-nmap <M-j> <Action>(MoveLineUp)
-vmap <M-j> <Action>(MoveLineUp)
-nmap <M-k> <Action>(MoveLineDown)
-vmap <M-k> <Action>(MoveLineDown)
+nmap <M-j> <Action>(MoveLineDown)
+vmap <M-j> <Action>(MoveLineDown)
+nmap <M-k> <Action>(MoveLineUp)
+vmap <M-k> <Action>(MoveLineUp)
 
 " ====================================================================
 " THE 'w' NAMESPACE: Tool Window Management (JetBrains-Specific)
