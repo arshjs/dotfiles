@@ -25,6 +25,9 @@ unset __conda_setup
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
+# ----- Bat setup -----
+export BAT_THEME="Catppuccin Mocha"
+
 
 # ----- Zoxide setup -----
 eval "$(zoxide init zsh)"
